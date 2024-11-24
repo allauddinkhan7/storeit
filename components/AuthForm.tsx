@@ -43,6 +43,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
+      email: "",
     },
   });
 
