@@ -4,6 +4,10 @@ import { Account, Avatars, Client, Databases, Storage } from "node-appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { cookies } from "next/headers";
 
+
+//function that creates admin and sessions clients
+
+//node app-write sdk to make sure all our services work on the server side for that create Client
 export const createSessionClient = async () => {
   const client = new Client()
     .setEndpoint(appwriteConfig.endpointUrl)
