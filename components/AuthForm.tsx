@@ -1,13 +1,13 @@
 "use client";
+
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,7 +17,8 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { createAccount, signInUser } from "@/lib/actions/user.actions";
+// import OtpModal from "@/components/OTPModal";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -25,19 +26,18 @@ const authFormSchema = (formType: FormType) => {
   return z.object({
     email: z.string().email(),
     fullName:
-      formType === "sign-up"
-        ? z.string().min(2).max(50)
-        : z.string().optional(),
+      formType === "sign-up" ?
+        z.string().min(2).max(50)
+      : z.string().optional(),
   });
 };
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [accountId, setAccountId] = useState(null);
+
   const formSchema = authFormSchema(type);
-
-
-
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,7 +48,23 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    setIsLoading(true);
+    setErrorMsg("");
+    try {
+      const user =
+        type === "sign-up" ?
+          await createAccount({
+            fullName: values.fullName || "",
+            email: values.email,
+          })
+        : await signInUser({ email: values.email });
+
+      setAccountId(user.accountId);
+    } catch {
+      setErrorMsg("Failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>

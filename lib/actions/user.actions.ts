@@ -37,13 +37,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
   }
 };
 
-export const createAccount = async ({
-  fullName,
-  email,
-}: {
-  fullName: string;
-  email: string;
-}) => {
+export const createAccount = async ({ fullName, email,}: { fullName: string; email: string;}) => {
   const existingUser = await getUserByEmail(email);
 
   const accountId = await sendEmailOTP({ email });
@@ -59,7 +53,7 @@ export const createAccount = async ({
       {
         fullName,
         email,
-        // avatar: avatarPlaceholderUrl,
+        avatar: 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg',
         accountId,
       },
     );
