@@ -1,13 +1,12 @@
+"use client";
 import React, { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
@@ -17,9 +16,10 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useRouter } from "next/navigation";
-import { verifySecret, sendEmailOTP } from "@/lib/actions/user.actions";
+import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { Button } from "./ui/button";
+import { AlertDialogAction, AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 
 const OTPModel = ({
     accountId,
@@ -54,6 +54,7 @@ const OTPModel = ({
 
     const handleResendOtp = async() => {
         //call Api to resend OTP
+        await sendEmailOTP({email})
     }
    return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>

@@ -7,6 +7,7 @@ import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
 // import { avatarPlaceholderUrl } from "@/constants"; 
 import { redirect } from "next/navigation";
+import { avatarPlaceholderUrl } from "@/constants";
 
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
@@ -53,7 +54,7 @@ export const createAccount = async ({ fullName, email,}: { fullName: string; ema
       {
         fullName,
         email,
-        avatar: 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg',
+        avatar: avatarPlaceholderUrl,
         accountId,
       },
     );
@@ -86,6 +87,9 @@ export const verifySecret = async ({
     handleError(error, "Failed to verify OTP");
   }
 };
+
+
+//fetch current active user
 
 export const getCurrentUser = async () => {
   try {
