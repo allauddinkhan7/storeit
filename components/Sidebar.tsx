@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { navItems } from "@/constants";
@@ -60,7 +59,6 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
         </ul>
       </nav>
 
-
       <Image
         src="/assets/images/files-2.png"
         alt="logo"
@@ -68,7 +66,7 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
         height={418}
         className="w-full"
       />
-  <div className="sidebar-user-info">
+      <div className="sidebar-user-info">
         <Image
           src={avatar}
           alt="Avatar"
@@ -81,7 +79,6 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
           <p className="caption">{email}</p>
         </div>
       </div>
-
     </aside>
   );
 };
