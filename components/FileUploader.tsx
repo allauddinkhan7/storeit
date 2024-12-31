@@ -1,10 +1,11 @@
-"use client"
-import React, { useCallback } from 'react'
-import {useDropzone} from 'react-dropzone'
-import { Button } from './ui/button'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
-import { usePathname } from 'next/navigation'
+"use client";
+import React, { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { Button } from "./ui/button";
+import Image from "next/image";
+import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import Thumbnail from "./Thumbnail";
 
 interface Props {
   ownerId: string;
@@ -13,14 +14,21 @@ interface Props {
 }
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const path = usePathname();
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const [files, setFiles] = useState<File[]>([]);
 
-  const onDrop = useCallback(acceptedFiles => {
-    // Do something with the files
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+  const handleRemoveFile = (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    fileName: string,
+  ) => {
+    e.stopPropagation();
+    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+  };
   return (
     <div {...getRootProps()} className="cursor-pointer">
       <input {...getInputProps()} />
@@ -33,13 +41,52 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         />{" "}
         <p>Upload</p>
       </Button>
-      {
-        isDragActive ?
-          <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
-      }
-    </div>
-  )
-}
+      {files.length > 0 && (
+        <ul className="uploader-preview-list">
+          <h4 className="h4 text-light-100">Uploading</h4>
 
-export default FileUploader
+          {files.map((file, index) => {
+            const { type, extension } = getFileType(file.name); //is it image or file
+            return (
+              <li
+                key={`${file.name}-${{ index }}`}
+                className="uploader-preview-item"
+              >
+                <div className="flex items-center gap-3">
+                  {/* this component will render the preview of the img we are trying to upload it */}
+                  <Thumbnail
+                    type={type}
+                    extension={extension}
+                    url={convertFileToUrl(file)}
+                  />
+
+                  <div className="preview-item-name">
+                    {file.name}
+                    <Image
+                      src="assets/icons/file-loader.gif"
+                      alt="Loader"
+                      width={80}
+                      height={26}
+                    />
+                  </div>
+                </div>
+                <Image
+                  src="assets/icons/remove.svg"
+                  width={24}
+                  height={24}
+                  alt="Remove"
+                  onClick={(e) => handleRemoveFile(e, file.name)}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {isDragActive ?
+        <p>Drop the files here ...</p>
+      : <p>Drag 'n' drop some files here, or click to select files</p>}
+    </div>
+  );
+};
+
+export default FileUploader;
