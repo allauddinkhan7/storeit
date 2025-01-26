@@ -39,8 +39,6 @@ const OTPModel = ({
         e.preventDefault();
         setIsLoading(true);
         console.log({ accountId, password });
-
-
         try {
             //call API to varify OTP
             const sessionId = await verifySecret({accountId, password})
@@ -49,6 +47,7 @@ const OTPModel = ({
         } catch (error) {
             console.log("failed to varify OTP", error)
         }
+        setIsLoading(false)
 
     }
 

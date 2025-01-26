@@ -73,7 +73,7 @@ export const verifySecret = async ({
     const { account } = await createAdminClient();
 
     const session = await account.createSession(accountId, password);
-
+    //set that session to a cookie
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
@@ -89,7 +89,6 @@ export const verifySecret = async ({
 
 
 //fetch current active user
-
 export const getCurrentUser = async () => {
   try {
     const { databases, account } = await createSessionClient();
@@ -110,18 +109,6 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const signOutUser = async () => {
-  const { account } = await createSessionClient();
-
-  try {
-    await account.deleteSession("current");
-    (await cookies()).delete("appwrite-session");
-  } catch (error) {
-    handleError(error, "Failed to sign out user");
-  } finally {
-    redirect("/sign-in");
-  }
-};
 
 export const signInUser = async ({ email }: { email: string }) => {
   try {
@@ -136,5 +123,17 @@ export const signInUser = async ({ email }: { email: string }) => {
     return parseStringify({ accountId: null, error: "User not found" });
   } catch (error) {
     handleError(error, "Failed to sign in user");
+  }
+};
+export const signOutUser = async () => {
+  const { account } = await createSessionClient();
+
+  try {
+    await account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
+  } catch (error) {
+    handleError(error, "Failed to sign out user");
+  } finally {
+    redirect("/sign-in");
   }
 };

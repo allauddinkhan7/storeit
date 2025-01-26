@@ -2,6 +2,8 @@ import React from "react";
 import Image from "next/image";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+  console.log("2---  Hello from (auth)")
+
   return (
     <div className="flex min-h-screen">
       <section className="hidden w-1/2 items-center justify-center bg-brand p-10 lg:flex xl:w-2/5">

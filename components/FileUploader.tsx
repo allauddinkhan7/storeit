@@ -1,13 +1,13 @@
 "use client";
-
 import React, { useCallback, useState } from "react";
-
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
 import Image from "next/image";
 import Thumbnail from "@/components/Thumbnail";
 import { usePathname } from "next/navigation";
+import { MAX_FILE_SIZE } from "@/constants";
+import { useToast } from "@/hooks/use-toast";
 
 interface Props {
   ownerId: string;
@@ -18,10 +18,15 @@ interface Props {
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const path = usePathname();
   const [files, setFiles] = useState<File[]>([]);
-
+  const {toast}= useToast();
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       setFiles(acceptedFiles);
+      const uploadPromises = acceptedFiles.map(async (file) => {
+          if (file.size > MAX_FILE_SIZE) {
+            setFiles((prevFile)=> prevFile.filter((f) => f.name !== file.name) );
+          }
+      })
     },
     [],
   );
@@ -54,7 +59,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
 
           {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
-
             return (
               <li
                 key={`${file.name}-${index}`}

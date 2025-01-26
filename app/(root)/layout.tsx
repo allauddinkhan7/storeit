@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/actions/user.actions";
 import { redirect } from "next/navigation";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
+  console.log("Hello from (ROOT)")
   const currentUser = await getCurrentUser();
   if (!currentUser) return redirect("/sign-in");
 
