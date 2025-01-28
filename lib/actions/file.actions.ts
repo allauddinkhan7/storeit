@@ -13,7 +13,7 @@ const handleError = (error: unknown, message: string) => {
 };
 export const uploadFiles = async ({
   file,
-  ownerId,
+  ownerId,//who created this File
   accountId,
   path,
 }: UploadFileProps) => {
