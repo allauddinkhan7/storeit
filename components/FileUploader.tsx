@@ -8,6 +8,7 @@ import Thumbnail from "@/components/Thumbnail";
 import { usePathname } from "next/navigation";
 import { MAX_FILE_SIZE } from "@/constants";
 import { useToast } from "@/hooks/use-toast";
+import { uploadFiles } from "@/lib/actions/file.actions";
 
 interface Props {
   ownerId: string;
@@ -18,24 +19,44 @@ interface Props {
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const path = usePathname();
   const [files, setFiles] = useState<File[]>([]);
-  const {toast}= useToast();
-  const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      setFiles(acceptedFiles);
-      const uploadPromises = acceptedFiles.map(async (file) => {
-          if (file.size > MAX_FILE_SIZE) {
-            setFiles((prevFile)=> prevFile.filter((f) => f.name !== file.name) );
-          }
+  const { toast } = useToast();
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles);
+    const uploadPromises = acceptedFiles.map(async (file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        setFiles((prevFile) => prevFile.filter((f) => f.name !== file.name));
+        return toast({
+          description: (
+            <p className="body-2 text-white">
+              <span className="font-semibold">{file.name}</span> is too large.
+              Max file size is 50MB
+            </p>
+          ),
+          className: "error-toast",
+        });
+      }
+
+      //if file is not too large
+      return uploadFiles({
+        file,
+        ownerId, //who created this File
+        accountId,
+        path,
+      }).then((uploadedFile)=> {
+        if(uploadedFile){
+          setFiles((prevFile) => prevFile.filter((f) => f.name !== file.name));
+        }
       })
-    },
-    [],
-  );
+    });
+
+    await Promise.all(uploadPromises)
+  }, [ownerId, accountId, path]);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
-    fileName: string,
+    fileName: string
   ) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));

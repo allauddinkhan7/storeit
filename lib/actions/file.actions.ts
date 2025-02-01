@@ -1,5 +1,4 @@
 "use server";
-import { UploadFileProps } from "@/types";
 import { createAdminClient } from "../appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "../utils";
 import { appwriteConfig } from "../appwrite/config";
@@ -11,6 +10,7 @@ const handleError = (error: unknown, message: string) => {
   console.log(error, message);
   throw error;
 };
+
 export const uploadFiles = async ({
   file,
   ownerId,//who created this File
@@ -19,15 +19,10 @@ export const uploadFiles = async ({
 }: UploadFileProps) => {
   const { storage, databases } = await createAdminClient();
   try {
-    const inputFile = InputFile.fromBuffer(file, file.name);
+    const inputFile = InputFile.fromBuffer(file, file.name); //read the file
+    const bucketFile = await storage.createFile( appwriteConfig.bucketId, ID.unique(), inputFile);
 
-    const bucketFile = await storage.createFile(
-      appwriteConfig.bucketId,
-      ID.unique(),
-      inputFile,
-    );
-
-    const fileDocument = {
+    const fileDocument = { //we want this meta data along with file and store it appwrite db
       type: getFileType(bucketFile.name).type,
       name: bucketFile.name,
       url: constructFileUrl(bucketFile.$id),

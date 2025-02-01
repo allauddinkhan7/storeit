@@ -5,13 +5,19 @@ import { signOutUser } from "@/lib/actions/user.actions";
 import FileUploader from "./FileUploader";
 import Search from "./Search";
 
-const Header = () => {
+const Header = ({
+  userId,
+  accountId,
+}: {
+  userId: string;
+  accountId: string;
+}) => {
   return (
     <header className="header">
       <Search />
 
       <div className="header-wrapper">
-        <FileUploader />
+        <FileUploader ownerId={userId} accountId={accountId} />
         {/* this is server component so we cannot use onCLick, formSubmissions*/}
         <form
           action={async () => {
