@@ -9,7 +9,9 @@ import { redirect } from "next/navigation";
 import { avatarPlaceholderUrl } from "@/constants";
 
 const getUserByEmail = async (email: string) => {
+  console.log("getUserByEmail", email)
   const { databases } = await createAdminClient();
+  console.log("createAdminClient created in getUserByEmail.......................... ", databases)
 
   const result = await databases.listDocuments(
     appwriteConfig.databaseId,
@@ -27,7 +29,8 @@ const handleError = (error: unknown, message: string) => {
 
 export const sendEmailOTP = async ({ email }: { email: string }) => {
   const { account } = await createAdminClient();
-
+  console.log("sendEmailOTP",account);
+  
   try {
     const session = await account.createEmailToken(ID.unique(), email);
 
@@ -39,7 +42,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
 
 export const createAccount = async ({ fullName, email,}: { fullName: string; email: string;}) => {
   const existingUser = await getUserByEmail(email);
-
+  console.log("user already exist ========")
   const accountId = await sendEmailOTP({ email });
   if (!accountId) throw new Error("Failed to send an OTP");
 
@@ -112,8 +115,11 @@ export const getCurrentUser = async () => {
 
 export const signInUser = async ({ email }: { email: string }) => {
   try {
+    console.log("signInUse,,,,,,,,,,,,,,",email);
+    
     const existingUser = await getUserByEmail(email);
-
+    console.log("existingUser", existingUser);
+    
     // User exists, send OTP
     if (existingUser) {
       await sendEmailOTP({ email });
