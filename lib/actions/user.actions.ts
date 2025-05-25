@@ -118,7 +118,7 @@ export const signInUser = async ({ email }: { email: string }) => {
     console.log("signInUse,,,,,,,,,,,,,,",email);
     
     const existingUser = await getUserByEmail(email);
-    console.log("existingUser", existingUser);
+    console.log("login existingUser", existingUser);
     
     // User exists, send OTP
     if (existingUser) {

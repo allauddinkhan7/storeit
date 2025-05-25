@@ -18,6 +18,9 @@ const Header = ({
 
       <div className="header-wrapper">
         <FileUploader ownerId={userId} accountId={accountId} />
+        
+        
+        {/*Logout*/}
         {/* this is server component so we cannot use onCLick, formSubmissions*/}
         <form
           action={async () => {
